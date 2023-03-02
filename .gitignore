@@ -1,0 +1,8 @@
+node_modules
+*.log
+.bundle
+vendor
+*.swp
+/package-lock.json
+npm-cache
+tmp
