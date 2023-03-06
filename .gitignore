@@ -3,6 +3,5 @@ node_modules
 .bundle
 vendor
 *.swp
-/package-lock.json
 npm-cache
 tmp

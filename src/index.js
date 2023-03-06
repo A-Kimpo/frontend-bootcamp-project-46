@@ -1,12 +1,16 @@
 import _ from 'lodash';
 import fs from 'node:fs';
 import path from 'node:path';
+import yaml from 'js-yaml';
 
 const readFile = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
 
 const getExtension = (filepath) => (path.resolve(process.cwd(), filepath)).split('.').pop();
 
-const parseFile = (file, extension) => extension === 'json' ? JSON.parse(file) : 'Unknown';
+const parseFile = (file, extension) => {
+  if (extension === 'json') return JSON.parse(file);
+  if (extension === 'yaml' || extension === 'yml') return yaml.load(file);
+};
 
 const genDiff = (filepath1, filepath2) => {
   const file1 = readFile(filepath1);
