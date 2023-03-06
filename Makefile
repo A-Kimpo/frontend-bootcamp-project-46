@@ -2,7 +2,7 @@ install: install-deps
 	npx simple-git-hooks
 
 run:
-	bin/gendiff.js 10
+	bin/gendiff.js
 
 install-deps:
 	npm ci

@@ -2,15 +2,15 @@ import _ from 'lodash';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const getFile = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
+const readFile = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
 
 const getExtension = (filepath) => (path.resolve(process.cwd(), filepath)).split('.').pop();
 
-const parseFile = (file, extension) => extension === 'json' ? JSON.parse(file) : null;
+const parseFile = (file, extension) => extension === 'json' ? JSON.parse(file) : 'Unknown';
 
 const genDiff = (filepath1, filepath2) => {
-  const file1 = getFile(filepath1);
-  const file2 = getFile(filepath2);
+  const file1 = readFile(filepath1);
+  const file2 = readFile(filepath2);
   const extension1 = getExtension(filepath1)
   const extension2 = getExtension(filepath2)
   const object1 = parseFile(file1, extension1);
