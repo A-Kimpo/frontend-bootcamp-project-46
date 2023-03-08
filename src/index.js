@@ -5,7 +5,7 @@ import getTree from './getTree.js';
 import getFormatter from './formatters/getFormatter.js';
 
 const readFile = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
-const getExtension = (filepath) => (path.resolve(process.cwd(), filepath)).split('.').pop();
+const getExtension = (filepath) => (path.extname(path.resolve(process.cwd(), filepath)).slice(1));
 
 const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const file1 = readFile(filepath1);
@@ -14,8 +14,8 @@ const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const extensionFile2 = getExtension(filepath2);
   const object1 = parseFile(file1, extensionFile1);
   const object2 = parseFile(file2, extensionFile2);
-  const tree = getTree(object1, object2);
-  const formattedTree = getFormatter(tree, format);
+  const comparisonTree = getTree(object1, object2);
+  const formattedTree = getFormatter(comparisonTree, format);
   return formattedTree;
 };
 

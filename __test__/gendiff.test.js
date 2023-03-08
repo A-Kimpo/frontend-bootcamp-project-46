@@ -6,10 +6,13 @@ import genDiff from '../src';
 const getPath = (fileName) => path.resolve(process.cwd(), `./__fixtures__/${fileName}`);
 const readFile = (fileName) => fs.readFileSync(getPath(fileName), 'utf-8');
 
-test('genDiffNested', () => {
-  expect(genDiff(getPath('fileNested1.json'), getPath('fileNested2.json'))).toEqual(readFile('fileRightStylish.txt'));
-});
+const files = [
+  ['fileNested1.json', 'fileNested2.json', 'stylish', 'fileRightStylish.txt'],
+  ['fileNested1.yml', 'fileNested2.yaml', 'stylish', 'fileRightStylish.txt'],
+  ['fileNested1.json', 'fileNested2.json', 'plain', 'fileRightPlain.txt'],
+  ['fileNested1.json', 'fileNested2.json', 'plain', 'fileRightPlain.txt'],
+];
 
-test('genDiffNestedYaml', () => {
-  expect(genDiff(getPath('fileNested1.yml'), getPath('fileNested2.yaml'))).toEqual(readFile('fileRightStylish.txt'));
+test.each(files)('genDiff compare %p %p %p', (file1, file2, format, expected) => {
+  expect(genDiff(getPath(file1), getPath(file2), format)).toBe(readFile(expected));
 });

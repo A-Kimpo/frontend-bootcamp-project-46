@@ -1,54 +1,40 @@
-const getSpace = (count) => {
-  const spacesCount = 4;
-  const intend = ' '.repeat(spacesCount * count - 2);
-  return intend;
-};
+const spacesCount = 4;
 
-const getBracketSpace = (count) => {
-  const spacesCount = 4;
-  const intend = ' '.repeat(spacesCount * count - spacesCount);
-  return intend;
-};
+const getStylishSpace = (count) => ' '.repeat(spacesCount * count - 2);
 
-const stringify = (value, startDepth) => {
-  const iter = (objectValue, depth) => {
-    if (typeof (objectValue) !== 'object' || objectValue === null) {
-      return `${objectValue}`;
-    }
-    let objectString = '{\n';
-    const replacer = ' ';
-    const spacesCount = 4;
-    const increasedSize = spacesCount * depth;
-    const space = replacer.repeat(increasedSize);
-    const bracketSpace = replacer.repeat(increasedSize - spacesCount);
-    Object.keys(objectValue).map((key) => {
-      objectString += `${space}${key}: ${iter(objectValue[key], depth + 1)}\n`;
-      return objectString;
-    });
-    objectString += `${bracketSpace}}`;
-    return objectString;
-  };
-  return iter(value, startDepth);
+const getStringifySpace = (count) => ' '.repeat(spacesCount * count);
+
+const getBracketSpace = (count) => ' '.repeat(spacesCount * count - spacesCount);
+
+const stringify = (values, depth) => {
+  if (typeof (values) !== 'object' || values === null) {
+    return `${values}`;
+  }
+  const lines = Object
+    .entries(values)
+    .map(([key, value]) => `${getStringifySpace(depth)}${key}: ${stringify(value, depth + 1)}`);
+  return ['{', ...lines, `${getBracketSpace(depth)}}`].join('\n');
 };
 
 const stylish = (comparisonTree) => {
   const iter = (tree, depth) => {
     const output = tree.map((key) => {
-      const space = getSpace(depth);
       if (key.type === 'nested') {
-        return `${space}  ${key.name}: ${iter(key.value, depth + 1)}`;
+        return `${getStylishSpace(depth)}  ${key.name}: ${iter(key.value, depth + 1)}`;
       }
       if (key.type === 'added') {
-        return `${space}+ ${key.name}: ${stringify(key.value, depth + 1)}`;
+        return `${getStylishSpace(depth)}+ ${key.name}: ${stringify(key.value, depth + 1)}`;
       }
       if (key.type === 'deleted') {
-        return `${space}- ${key.name}: ${stringify(key.value, depth + 1)}`;
+        return `${getStylishSpace(depth)}- ${key.name}: ${stringify(key.value, depth + 1)}`;
       }
       if (key.type === 'unchanged') {
-        return `${space}  ${key.name}: ${stringify(key.value, depth + 1)}`;
+        return `${getStylishSpace(depth)}  ${key.name}: ${stringify(key.value, depth + 1)}`;
       }
       if (key.type === 'changed') {
-        return `${space}- ${key.name}: ${stringify(key.oldValue, depth + 1)}\n${space}+ ${key.name}: ${stringify(key.newValue, depth + 1)}`;
+        const before = `${getStylishSpace(depth)}- ${key.name}: ${stringify(key.oldValue, depth + 1)}`;
+        const after = `${getStylishSpace(depth)}+ ${key.name}: ${stringify(key.newValue, depth + 1)}`;
+        return `${before}\n${after}`;
       }
       throw new Error('Something went wrong!');
     });
