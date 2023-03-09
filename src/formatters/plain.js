@@ -4,34 +4,30 @@ const stringify = (values) => {
   return `${values}`;
 };
 
-const plain = (comparisonTree) => {
-  const iter = (tree, path, depth) => tree
-    .filter((key) => key.type !== 'unchanged')
-    .map((key) => {
-      const keysPath = path ? `${path}.${key.name}` : `${key.name}`;
+const plain = (tree, path, depth) => tree
+  .filter((key) => key.type !== 'unchanged')
+  .map((key) => {
+    const keysPath = path ? `${path}.${key.name}` : `${key.name}`;
 
-      switch (key.type) {
-        case 'nested': {
-          return iter(key.value, keysPath, depth + 1);
-        }
-        case 'added': {
-          const value = stringify(key.value);
-          return `Property '${keysPath}' was added with value: ${value}`;
-        }
-        case 'deleted': {
-          return `Property '${keysPath}' was removed`;
-        }
-        case 'changed': {
-          const oldValue = stringify(key.oldValue);
-          const newValue = stringify(key.newValue);
-          return `Property '${keysPath}' was updated. From ${oldValue} to ${newValue}`;
-        }
-        default: throw new Error('Something went wrong!');
+    switch (key.type) {
+      case 'nested': {
+        return plain(key.value, keysPath, depth + 1);
       }
-    })
-    .join('\n');
+      case 'added': {
+        const value = stringify(key.value);
+        return `Property '${keysPath}' was added with value: ${value}`;
+      }
+      case 'deleted': {
+        return `Property '${keysPath}' was removed`;
+      }
+      case 'changed': {
+        const oldValue = stringify(key.oldValue);
+        const newValue = stringify(key.newValue);
+        return `Property '${keysPath}' was updated. From ${oldValue} to ${newValue}`;
+      }
+      default: throw new Error('Something went wrong!');
+    }
+  })
+  .join('\n');
 
-  return iter(comparisonTree, '', 1);
-};
-
-export default plain;
+export default (comparisonTree) => plain(comparisonTree, '', 1);
