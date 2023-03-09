@@ -10,7 +10,9 @@ const files = [
   ['fileNested1.json', 'fileNested2.json', 'stylish', 'fileRightStylish.txt'],
   ['fileNested1.yml', 'fileNested2.yaml', 'stylish', 'fileRightStylish.txt'],
   ['fileNested1.json', 'fileNested2.json', 'plain', 'fileRightPlain.txt'],
-  ['fileNested1.json', 'fileNested2.json', 'plain', 'fileRightPlain.txt'],
+  ['fileNested1.yml', 'fileNested2.yaml', 'plain', 'fileRightPlain.txt'],
+  ['fileNested1.json', 'fileNested2.json', 'json', 'fileRight.json'],
+  ['fileNested1.yml', 'fileNested2.yaml', 'json', 'fileRight.json'],
 ];
 
 test.each(files)('genDiff compare %p %p %p', (file1, file2, format, expected) => {

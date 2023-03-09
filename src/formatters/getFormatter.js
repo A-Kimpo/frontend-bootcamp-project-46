@@ -1,8 +1,15 @@
+import json from './json.js';
 import plain from './plain.js';
 import stylish from './stylish.js';
 
 export default (tree, format) => {
-  if (format === 'stylish') return stylish(tree);
-  if (format === 'plain') return plain(tree);
-  return 'Please choose supported formatter';
+  switch (format) {
+    case 'stylish': return stylish(tree);
+
+    case 'plain': return plain(tree);
+
+    case 'json': return json(tree);
+
+    default: return 'Please choose supported formatter!';
+  }
 };

@@ -1,35 +1,36 @@
-const stringify = (objectValue) => {
-  if (typeof (objectValue) === 'object' && objectValue !== null) return '[complex value]';
-  if (typeof (objectValue) === 'string') return `'${objectValue}'`;
-  return `${objectValue}`;
+const stringify = (values) => {
+  if (typeof (values) === 'object' && values !== null) return '[complex value]';
+  if (typeof (values) === 'string') return `'${values}'`;
+  return `${values}`;
 };
 
 const plain = (comparisonTree) => {
-  const iter = (tree, path, depth) => {
-    const summary = tree
-      .filter((key) => key.type !== 'unchanged')
-      .map((key) => {
-        const newPath = [path, key.name].join('.');
-        const pathKeys = newPath.slice(1);
-        const value = stringify(key.value);
-        const oldValue = stringify(key.oldValue);
-        const newValue = stringify(key.newValue);
-        if (key.type === 'nested') {
-          return iter(key.value, newPath, depth + 1);
+  const iter = (tree, path, depth) => tree
+    .filter((key) => key.type !== 'unchanged')
+    .map((key) => {
+      const keysPath = path ? `${path}.${key.name}` : `${key.name}`;
+
+      switch (key.type) {
+        case 'nested': {
+          return iter(key.value, keysPath, depth + 1);
         }
-        if (key.type === 'deleted') {
-          return `Property '${pathKeys}' was removed`;
+        case 'added': {
+          const value = stringify(key.value);
+          return `Property '${keysPath}' was added with value: ${value}`;
         }
-        if (key.type === 'changed') {
-          return `Property '${pathKeys}' was updated. From ${oldValue} to ${newValue}`;
+        case 'deleted': {
+          return `Property '${keysPath}' was removed`;
         }
-        if (key.type === 'added') {
-          return `Property '${pathKeys}' was added with value: ${value}`;
+        case 'changed': {
+          const oldValue = stringify(key.oldValue);
+          const newValue = stringify(key.newValue);
+          return `Property '${keysPath}' was updated. From ${oldValue} to ${newValue}`;
         }
-        throw new Error('Something went wrong!');
-      });
-    return [...summary].join('\n');
-  };
+        default: throw new Error('Something went wrong!');
+      }
+    })
+    .join('\n');
+
   return iter(comparisonTree, '', 1);
 };
 

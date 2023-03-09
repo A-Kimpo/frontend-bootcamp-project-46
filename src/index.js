@@ -10,12 +10,16 @@ const getExtension = (filepath) => (path.extname(path.resolve(process.cwd(), fil
 const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const file1 = readFile(filepath1);
   const file2 = readFile(filepath2);
+
   const extensionFile1 = getExtension(filepath1);
   const extensionFile2 = getExtension(filepath2);
+
   const object1 = parseFile(file1, extensionFile1);
   const object2 = parseFile(file2, extensionFile2);
+
   const comparisonTree = getTree(object1, object2);
   const formattedTree = getFormatter(comparisonTree, format);
+
   return formattedTree;
 };
 
