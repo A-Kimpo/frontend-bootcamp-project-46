@@ -2,12 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import parseFile from './parsers.js';
 import getTree from './getTree.js';
-import getFormatter from './formatters/getFormatter.js';
+import format from './formatters/format.js';
 
 const readFile = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
 const getExtension = (filepath) => (path.extname(path.resolve(process.cwd(), filepath)).slice(1));
 
-const genDiff = (filepath1, filepath2, format = 'stylish') => {
+const genDiff = (filepath1, filepath2, formatType = 'stylish') => {
   const file1 = readFile(filepath1);
   const file2 = readFile(filepath2);
 
@@ -18,7 +18,7 @@ const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const object2 = parseFile(file2, extensionFile2);
 
   const comparisonTree = getTree(object1, object2);
-  const formattedTree = getFormatter(comparisonTree, format);
+  const formattedTree = format(comparisonTree, formatType);
 
   return formattedTree;
 };
